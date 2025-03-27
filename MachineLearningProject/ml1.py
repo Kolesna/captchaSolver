@@ -12,7 +12,7 @@ for dataItem in dataTrain:
 
 while True:
     try:
-        userVal = int(input('New data value: '))
+        userVal = float(input('New data value: '))
     except (EOFError, KeyboardInterrupt):
         break
     except ValueError:
