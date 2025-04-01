@@ -19,6 +19,8 @@ for filename in sorted(os.listdir(trainingFolder)) :
         img_flat = img_gray.flatten()
         dataTrain.append(img_flat)
         filename = os.path.splitext(filename)[0]
+        filename = filename.rstrip('0123456789')
+   
         dataLabels.append(filename)
         
 
