@@ -35,5 +35,5 @@ for filename in sorted(os.listdir(testFolder)):
         img_gray = rgb2gray(img)
         img_flat = img_gray.flatten()
         prediction = model.predict([img_flat])
-        print(prediction)
+        print(f"Running {os.path.splitext(filename)[0]}- model predicts {prediction}")
 
