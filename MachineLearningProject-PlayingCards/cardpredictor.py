@@ -20,4 +20,7 @@ for filename in sorted(os.listdir(trainingFolder)):
         img_gray = resize(rgb2gray(img), IMG_SHAPE)
         img_flat = img_gray.flatten()
         dataTrain.append(img_flat)
-        dataLabels.append(filename)
+        dataLabels.append(os.path.splitext(filename)[0])
+
+model = DecisionTreeClassifier(random_state=42)
+model.fit(dataTrain, dataLabels)
