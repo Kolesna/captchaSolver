@@ -24,3 +24,12 @@ for filename in sorted(os.listdir(trainingFolder)):
 
 model = DecisionTreeClassifier(random_state=42)
 model.fit(dataTrain, dataLabels)
+
+for filename in sorted(os.listdir(testFolder)):
+    if filename.endswith('.png'):
+        img = imread(os.path.join(testFolder, filename))
+        img = img[:, :, :3]
+        img_gray = resize(rgb2gray(img), IMG_SHAPE)
+        img_flat = img_gray.flatten()
+        prediction = model.predict([img_flat])
+        print(prediction)
