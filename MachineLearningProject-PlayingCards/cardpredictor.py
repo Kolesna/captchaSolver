@@ -22,6 +22,9 @@ for filename in sorted(os.listdir(trainingFolder)):
         dataTrain.append(img_flat)
         dataLabels.append(os.path.splitext(filename)[0])
 
+dataTrain = np.array(dataTrain)
+dataLabels = np.array(dataLabels)
+
 model = DecisionTreeClassifier(random_state=42)
 model.fit(dataTrain, dataLabels)
 
