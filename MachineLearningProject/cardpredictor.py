@@ -50,6 +50,32 @@ def maxcontrast(image):
 
     return new_image
                 
+def cropWhite(input):
+    img = np.array(input)
+    if len(img.shape) == 3:
+        if img.shape[2] >= 3:
+            img = np.mean(img[:,:,:3], axis=2)
+        else:
+            img = img[:,:,0]
+    img = np.rot90(img)
+    new_img = []
+
+    for i in img:
+        avgDark = 0
+        lenI = len(i)
+        for g in i:
+            avgDark += (g)/lenI
+            
+        
+        if avgDark < 0.75:
+            new_img.append(i)
+
+    if len(new_img) == 0:
+        raise ValueError('No text found in image')
+
+    new_img = np.rot90(new_img, 3)
+    return new_img
+
 def showArrayAsImage(input):
     plt.imshow(input, cmap='gray')
     plt.axis('off')
@@ -60,6 +86,7 @@ def preProcessImage(input):
 
     img = np.array(input)
     img = maxcontrast(img)
+    img = cropWhite(img)
     return img
 
 trainingFolder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'Cards')    
