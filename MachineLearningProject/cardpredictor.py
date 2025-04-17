@@ -95,3 +95,38 @@ IMG_SHAPE = (40, 50)
 
 dataTrain = []
 dataLabels = []
+
+for filename in sorted(os.listdir(trainingFolder)):
+    if filename.endswith('.png'):
+        img = imread(os.path.join(trainingFolder, filename))
+        img = img[:, :, :3]
+        imgProcessed = preProcessImage(img)
+        fiveSplit = len(imgProcessed[0]) // 5
+        spotlist = []
+
+        filename = filename[:-4]
+        namelist = list(filename)
+            
+        for i in range(0,5):
+            tempimage = []
+            spotlist.append((fiveSplit*i) + (fiveSplit//2))
+            hcount = 0
+            for h in imgProcessed:
+                temprow = []
+                gcount = 0
+                for g in h:
+                    for k in range(spotlist[i]-(fiveSplit//3 *2),spotlist[i]+(fiveSplit//3 *2)):
+                        if gcount == k:
+
+                            temprow.append(g)
+                    gcount += 1
+                tempimage.append(temprow)
+                hcount += 1    
+        
+            
+            
+            img_array = np.array(tempimage)
+            dataTrain.append(img_array)
+            dataLabels.append(namelist[i])
+        print("Processing " + filename + " done")
+            
