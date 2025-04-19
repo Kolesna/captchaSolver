@@ -126,7 +126,14 @@ for filename in sorted(os.listdir(trainingFolder)):
             
             
             img_array = np.array(tempimage)
-            dataTrain.append(img_array)
+            img_resize = resize(img_array, IMG_SHAPE, anti_aliasing=True)
+            
+            img_flat = img_resize.flatten()
+            
+            dataTrain.append(img_flat)
             dataLabels.append(namelist[i])
         print("Processing " + filename + " done")
             
+
+dataTrain = np.array(dataTrain)
+dataLabels = np.array(dataLabels)
