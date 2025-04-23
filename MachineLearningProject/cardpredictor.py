@@ -89,6 +89,36 @@ def preProcessImage(input):
     img = cropWhite(img)
     return img
 
+def processTestImage(input):
+    img = np.array(input)
+    img = img[:, :, :3]
+    imgProcessed = preProcessImage(img)
+    
+    fiveSplit = len(imgProcessed[0]) // 5
+    spotlist = []
+    processed_segments = []
+    
+    for i in range(0, 5):
+        tempimage = []
+        spotlist.append((fiveSplit*i) + (fiveSplit//2))
+        hcount = 0
+        for h in imgProcessed:
+            temprow = []
+            gcount = 0
+            for g in h:
+                for k in range(spotlist[i]-(fiveSplit//3 *2), spotlist[i]+(fiveSplit//3 *2)):
+                    if gcount == k:
+                        temprow.append(g)
+                gcount += 1
+            tempimage.append(temprow)
+            hcount += 1    
+        
+        img_array = np.array(tempimage)
+        img_resize = resize(img_array, IMG_SHAPE, anti_aliasing=True)
+        img_flat = img_resize.flatten()
+        processed_segments.append(img_flat)
+    
+    return processed_segments
 trainingFolder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'Cards')    
 testFolder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'CardTest')
 IMG_SHAPE = (40, 50)
@@ -140,3 +170,21 @@ dataLabels = np.array(dataLabels)
 
 model = DecisionTreeClassifier(random_state=42)
 model.fit(dataTrain, dataLabels)
+
+
+
+for filename in sorted(os.listdir(testFolder)):
+    if filename.endswith('.png') and not os.path.isfile(os.path.join(trainingFolder, filename)):
+        img = imread(os.path.join(testFolder, filename))
+        
+        img_segments = processTestImage(img)
+        
+        print(f"\nProcessing {os.path.splitext(filename)[0]}:")
+        predictions = []
+        
+        for i, segment in enumerate(img_segments):
+            prediction = model.predict([segment])
+            predictions.append(prediction[0])
+
+        print(f"  Full prediction: {''.join(predictions)}")
+        
