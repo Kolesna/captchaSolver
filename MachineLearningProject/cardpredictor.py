@@ -173,6 +173,8 @@ model.fit(dataTrain, dataLabels)
 
 
 
+correct = 0
+wrong = 0
 for filename in sorted(os.listdir(testFolder)):
     if filename.endswith('.png') and not os.path.isfile(os.path.join(trainingFolder, filename)):
         img = imread(os.path.join(testFolder, filename))
@@ -186,5 +188,14 @@ for filename in sorted(os.listdir(testFolder)):
             prediction = model.predict([segment])
             predictions.append(prediction[0])
 
+        filename = filename[:-4]
+        namelist = list(filename)
+        for i in range(0,len(predictions)):
+            if predictions[i] == namelist[i]:
+                print("yes")
+                correct += 1
+            else:
+                wrong += 1
         print(f"  Full prediction: {''.join(predictions)}")
         
+print(correct/(correct+wrong) if correct+wrong else 'No test images found')
