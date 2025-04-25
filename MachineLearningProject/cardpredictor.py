@@ -168,7 +168,7 @@ for filename in sorted(os.listdir(trainingFolder)):
 dataTrain = np.array(dataTrain)
 dataLabels = np.array(dataLabels)
 
-model = RandomForestClassifier(n_estimators=30, random_state=42)
+model = RandomForestClassifier(n_estimators=100, random_state=42, max_depth=20)
 model.fit(dataTrain, dataLabels)
 
 
