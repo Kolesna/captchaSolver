@@ -168,7 +168,7 @@ for filename in sorted(os.listdir(trainingFolder)):
 dataTrain = np.array(dataTrain)
 dataLabels = np.array(dataLabels)
 
-model = KNeighborsClassifier(n_neighbors=5)
+model = KNeighborsClassifier(n_neighbors=3)
 model.fit(dataTrain, dataLabels)
 
 
