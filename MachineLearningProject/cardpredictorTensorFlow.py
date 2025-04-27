@@ -20,6 +20,85 @@ from sklearn.preprocessing import LabelEncoder
 tf.keras.utils.set_random_seed(42)
 
 
+def maxcontrast(image):
+    new_image = []
+
+    inum = 0
+    img = image
+    for i in img:
+        gnum = 0
+        new_row = []
+        if inum+1 == len(img):
+                pass
+        else:          
+            for g in i:
+                sorroundingAverage = 0
+                if gnum+1 == len(i):
+                    sorroundingAverage = 1
+
+                else:
+                    for h in range(-1,2):
+                        for k in range(-1,2):
+                            sorroundingAverage += int((img[inum+h][gnum+k][0]))/2295
+                            
+                
+                if sorroundingAverage > 0.5:
+                    new_row.append(1)
+                else:
+                    new_row.append(0)
+                gnum += 1
+                
+                
+            new_row2 = np.array(new_row)
+            new_image.append(new_row2)
+
+            
+            inum += 1
+    new_image = np.array(new_image)
+
+    return new_image
+                
+def cropWhite(input):
+    img = np.array(input)
+
+    if len(img.shape) == 3:
+        if img.shape[2] >= 3:
+            img = np.mean(img[:,:,:3], axis=2)
+        else:
+            img = img[:,:,0]
+
+    img = np.rot90(img)
+    new_img = []
+
+    for i in img:
+        avgDark = 0
+        lenI = len(i)
+        for g in i:
+            avgDark += (g)/lenI
+            
+        
+        if avgDark < 0.75:
+            new_img.append(i)
+
+    if len(new_img) == 0:
+        raise ValueError('No text found in image')
+
+    new_img = np.rot90(new_img, 3)
+    return new_img
+
+def showArrayAsImage(input):
+    plt.imshow(input, cmap='gray')
+    plt.axis('off')
+    plt.show()
+
+def preProcessImage(input):
+
+
+    img = np.array(input)
+    img = maxcontrast(img)
+    img = cropWhite(img)
+    return img
+
 trainingFolder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'Cards')
 testFolder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'CardTest')
 IMG_SHAPE = (40, 50)  
