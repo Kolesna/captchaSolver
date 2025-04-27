@@ -113,8 +113,8 @@ def processTestImage(input):
             tempimage.append(temprow)
             hcount += 1    
         
-        img_array = np.array(tempimage)
-        img_resize = resize(img_array, IMG_SHAPE, anti_aliasing=True)
+        img_array = np.array(tempimage, dtype=np.float32)
+        img_resize = resize(img_array, IMG_SHAPE, anti_aliasing=True, preserve_range=True)
         img_flat = img_resize.flatten()
         processed_segments.append(img_flat)
     
@@ -155,8 +155,8 @@ for filename in sorted(os.listdir(trainingFolder)):
         
             
             
-            img_array = np.array(tempimage)
-            img_resize = resize(img_array, IMG_SHAPE, anti_aliasing=True)
+            img_array = np.array(tempimage, dtype=np.float32)
+            img_resize = resize(img_array, IMG_SHAPE, anti_aliasing=True, preserve_range=True)
             
             img_flat = img_resize.flatten()
             
