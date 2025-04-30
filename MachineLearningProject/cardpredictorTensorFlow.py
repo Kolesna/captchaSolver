@@ -107,3 +107,42 @@ LABEL_ENCODER_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'l
 
 dataTrain = []
 dataLabels = []
+
+for filename in sorted(os.listdir(trainingFolder)):
+    if filename.endswith('.png'):
+        img = imread(os.path.join(trainingFolder, filename))
+        img = img[:, :, :3]
+        imgProcessed = preProcessImage(img)
+        fiveSplit = len(imgProcessed[0]) // 5
+        spotlist = []
+
+        filename = filename[:-4]
+        namelist = list(filename)
+            
+        for i in range(0,5):
+            tempimage = []
+            spotlist.append((fiveSplit*i) + (fiveSplit//2))
+            hcount = 0
+            for h in imgProcessed:
+                temprow = []
+                gcount = 0
+                for g in h:
+                    for k in range(spotlist[i]-(fiveSplit//3 *2),spotlist[i]+(fiveSplit//3 *2)):
+                        if gcount == k:
+
+                            temprow.append(g)
+                    gcount += 1
+                tempimage.append(temprow)
+                hcount += 1    
+        
+            
+            
+            img_array = np.array(tempimage)
+            img_resize = resize(img_array, IMG_SHAPE, anti_aliasing=True)
+            dataTrain.append(img_resize)
+            dataLabels.append(namelist[i])
+        print("Processing " + filename + " done")
+            
+
+dataTrain = np.array(dataTrain)
+dataLabels = np.array(dataLabels)
