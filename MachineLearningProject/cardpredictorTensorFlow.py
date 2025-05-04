@@ -105,6 +105,8 @@ IMG_SHAPE = (40, 50)
 MODEL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'captcha_cnn_model.h5')
 LABEL_ENCODER_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'label_encoder.pkl')
 
+label_encoder = LabelEncoder()
+
 dataTrain = []
 dataLabels = []
 
@@ -147,3 +149,5 @@ for filename in sorted(os.listdir(trainingFolder)):
 
 dataTrain = np.array(dataTrain)
 dataLabels = np.array(dataLabels)
+
+dataLabels_encoded = label_encoder.fit_transform(dataLabels)
