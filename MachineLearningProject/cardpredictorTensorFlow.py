@@ -151,3 +151,6 @@ dataTrain = np.array(dataTrain)
 dataLabels = np.array(dataLabels)
 
 dataLabels_encoded = label_encoder.fit_transform(dataLabels)
+dataLabels_categorical = to_categorical(dataLabels_encoded)
+
+num_classes = len(label_encoder.classes_)
