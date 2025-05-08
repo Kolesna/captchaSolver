@@ -105,6 +105,18 @@ IMG_SHAPE = (40, 50)
 MODEL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'captcha_cnn_model.h5')
 LABEL_ENCODER_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'label_encoder.pkl')
 
+def create_cnn_model(num_classes):
+    model = Sequential([
+        Conv2D(32, (3, 3), activation='relu', input_shape=(IMG_SHAPE[0], IMG_SHAPE[1], 1)),
+        MaxPooling2D((2, 2)),
+        Flatten(),
+        Dense(64, activation='relu'),
+        Dense(num_classes, activation='softmax')
+    ])
+    
+    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+    return model
+
 label_encoder = LabelEncoder()
 
 dataTrain = []
