@@ -109,6 +109,8 @@ def create_cnn_model(num_classes):
     model = Sequential([
         Conv2D(32, (3, 3), activation='relu', input_shape=(IMG_SHAPE[0], IMG_SHAPE[1], 1)),
         MaxPooling2D((2, 2)),
+        Conv2D(64, (3, 3), activation='relu'),
+        MaxPooling2D((2, 2)),
         Flatten(),
         Dense(64, activation='relu'),
         Dense(num_classes, activation='softmax')
