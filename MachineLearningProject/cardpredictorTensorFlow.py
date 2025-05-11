@@ -111,6 +111,7 @@ def create_cnn_model(num_classes):
         MaxPooling2D((2, 2)),
         Conv2D(64, (3, 3), activation='relu'),
         MaxPooling2D((2, 2)),
+        Conv2D(64, (3, 3), activation='relu'),
         Flatten(),
         Dense(64, activation='relu'),
         Dense(num_classes, activation='softmax')
@@ -118,6 +119,8 @@ def create_cnn_model(num_classes):
     
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
     return model
+
+
 
 label_encoder = LabelEncoder()
 
