@@ -114,6 +114,7 @@ def create_cnn_model(num_classes):
         Conv2D(64, (3, 3), activation='relu'),
         Flatten(),
         Dense(64, activation='relu'),
+        Dropout(0.5),
         Dense(num_classes, activation='softmax')
     ])
     
