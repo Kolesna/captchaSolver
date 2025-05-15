@@ -174,4 +174,4 @@ dataLabels_categorical = to_categorical(dataLabels_encoded)
 num_classes = len(label_encoder.classes_)
 model = create_cnn_model(num_classes)
 
-model.fit(dataTrain, dataLabels_categorical, epochs=int(os.environ.get('CAPTCHA_EPOCHS', '10')), batch_size=64)
+model.fit(dataTrain, dataLabels_categorical, epochs=int(os.environ.get('CAPTCHA_EPOCHS', '10')), batch_size=64, validation_split=0.2)
