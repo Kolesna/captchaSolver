@@ -99,6 +99,37 @@ def preProcessImage(input):
     img = cropWhite(img)
     return img
 
+def processTestImage(input):
+    img = np.array(input)
+    img = img[:, :, :3]
+    imgProcessed = preProcessImage(img)
+    
+    fiveSplit = len(imgProcessed[0]) // 5
+    spotlist = []
+    processed_segments = []
+    
+    for i in range(0, 5):
+        tempimage = []
+        spotlist.append((fiveSplit*i) + (fiveSplit//2))
+        hcount = 0
+        for h in imgProcessed:
+            temprow = []
+            gcount = 0
+            for g in h:
+                for k in range(spotlist[i]-(fiveSplit//3 *2), spotlist[i]+(fiveSplit//3 *2)):
+                    if gcount == k:
+                        temprow.append(g)
+                gcount += 1
+            tempimage.append(temprow)
+            hcount += 1    
+        
+        img_array = np.array(tempimage)
+        img_resize = resize(img_array, IMG_SHAPE, anti_aliasing=True)
+        img_2d = img_resize.reshape(IMG_SHAPE[0], IMG_SHAPE[1], 1)
+        processed_segments.append(img_2d)
+    
+    return processed_segments
+
 trainingFolder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'Cards')
 testFolder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'CardTest')
 IMG_SHAPE = (40, 50)  
