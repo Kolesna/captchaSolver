@@ -206,3 +206,24 @@ num_classes = len(label_encoder.classes_)
 model = create_cnn_model(num_classes)
 
 model.fit(dataTrain, dataLabels_categorical, epochs=int(os.environ.get('CAPTCHA_EPOCHS', '10')), batch_size=64, validation_split=0.2)
+
+for filename in sorted(os.listdir(testFolder)):
+    if filename.endswith('.png') and not os.path.isfile(os.path.join(trainingFolder, filename)):
+        img = imread(os.path.join(testFolder, filename))
+        
+        img_segments = processTestImage(img)
+        
+        print(f"\nProcessing {os.path.splitext(filename)[0]}:")
+        predictions = []
+        
+        for i, segment in enumerate(img_segments):
+            prediction = model.predict(np.array([segment]))
+            predicted_index = np.argmax(prediction)
+            predicted_label = label_encoder.inverse_transform([predicted_index])[0]
+
+            predictions.append(predicted_label)
+
+
+        print("  Full prediction:", ''.join(predictions))
+
+        
