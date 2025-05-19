@@ -207,6 +207,8 @@ model = create_cnn_model(num_classes)
 
 model.fit(dataTrain, dataLabels_categorical, epochs=int(os.environ.get('CAPTCHA_EPOCHS', '10')), batch_size=64, validation_split=0.2)
 
+correct = 0
+wrong = 0
 for filename in sorted(os.listdir(testFolder)):
     if filename.endswith('.png') and not os.path.isfile(os.path.join(trainingFolder, filename)):
         img = imread(os.path.join(testFolder, filename))
@@ -224,6 +226,17 @@ for filename in sorted(os.listdir(testFolder)):
             predictions.append(predicted_label)
 
 
+        filename = filename[:-4]
+        namelist = list(filename)
+        for i in range(0, len(predictions)):
+            if predictions[i] == namelist[i]:
+                correct += 1
+            else:
+                wrong += 1
+        
+
+
         print("  Full prediction:", ''.join(predictions))
 
         
+print(correct/(correct+wrong) if correct+wrong else 'No test images found')
