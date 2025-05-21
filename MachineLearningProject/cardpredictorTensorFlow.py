@@ -154,62 +154,67 @@ def create_cnn_model(num_classes):
 
 
 
-label_encoder = LabelEncoder()
+if os.environ.get('CAPTCHA_RETRAIN') != '1' and os.path.exists(MODEL_PATH) and os.path.exists(LABEL_ENCODER_PATH):
+    print("Loading existing CNN model...")
+    model = load_model(MODEL_PATH, compile=False)
+    label_encoder = joblib.load(LABEL_ENCODER_PATH)
+else:
+    label_encoder = LabelEncoder()
 
-dataTrain = []
-dataLabels = []
+    dataTrain = []
+    dataLabels = []
 
-for filename in sorted(os.listdir(trainingFolder)):
-    if filename.endswith('.png'):
-        img = imread(os.path.join(trainingFolder, filename))
-        img = img[:, :, :3]
-        imgProcessed = preProcessImage(img)
-        fiveSplit = len(imgProcessed[0]) // 5
-        spotlist = []
+    for filename in sorted(os.listdir(trainingFolder)):
+        if filename.endswith('.png'):
+            img = imread(os.path.join(trainingFolder, filename))
+            img = img[:, :, :3]
+            imgProcessed = preProcessImage(img)
+            fiveSplit = len(imgProcessed[0]) // 5
+            spotlist = []
 
-        filename = filename[:-4]
-        namelist = list(filename)
+            filename = filename[:-4]
+            namelist = list(filename)
+                
+            for i in range(0,5):
+                tempimage = []
+                spotlist.append((fiveSplit*i) + (fiveSplit//2))
+                hcount = 0
+                for h in imgProcessed:
+                    temprow = []
+                    gcount = 0
+                    for g in h:
+                        for k in range(spotlist[i]-(fiveSplit//3 *2),spotlist[i]+(fiveSplit//3 *2)):
+                            if gcount == k:
+
+                                temprow.append(g)
+                        gcount += 1
+                    tempimage.append(temprow)
+                    hcount += 1    
             
-        for i in range(0,5):
-            tempimage = []
-            spotlist.append((fiveSplit*i) + (fiveSplit//2))
-            hcount = 0
-            for h in imgProcessed:
-                temprow = []
-                gcount = 0
-                for g in h:
-                    for k in range(spotlist[i]-(fiveSplit//3 *2),spotlist[i]+(fiveSplit//3 *2)):
-                        if gcount == k:
+                
+                
+                img_array = np.array(tempimage)
+                img_resize = resize(img_array, IMG_SHAPE, anti_aliasing=True)
+                img_2d = img_resize.reshape(IMG_SHAPE[0], IMG_SHAPE[1], 1)
+                dataTrain.append(img_2d)
+                dataLabels.append(namelist[i])
+            print("Processing " + filename + " done")
+                
 
-                            temprow.append(g)
-                    gcount += 1
-                tempimage.append(temprow)
-                hcount += 1    
-        
-            
-            
-            img_array = np.array(tempimage)
-            img_resize = resize(img_array, IMG_SHAPE, anti_aliasing=True)
-            img_2d = img_resize.reshape(IMG_SHAPE[0], IMG_SHAPE[1], 1)
-            dataTrain.append(img_2d)
-            dataLabels.append(namelist[i])
-        print("Processing " + filename + " done")
-            
+    dataTrain = np.array(dataTrain)
+    dataLabels = np.array(dataLabels)
 
-dataTrain = np.array(dataTrain)
-dataLabels = np.array(dataLabels)
+    dataLabels_encoded = label_encoder.fit_transform(dataLabels)
+    dataLabels_categorical = to_categorical(dataLabels_encoded)
 
-dataLabels_encoded = label_encoder.fit_transform(dataLabels)
-dataLabels_categorical = to_categorical(dataLabels_encoded)
+    num_classes = len(label_encoder.classes_)
+    model = create_cnn_model(num_classes)
 
-num_classes = len(label_encoder.classes_)
-model = create_cnn_model(num_classes)
-
-model.fit(dataTrain, dataLabels_categorical, epochs=int(os.environ.get('CAPTCHA_EPOCHS', '10')), batch_size=64, validation_split=0.2)
-
-model.save(MODEL_PATH)
-joblib.dump(label_encoder, LABEL_ENCODER_PATH)
-print("CNN model saved!")
+    model.fit(dataTrain, dataLabels_categorical, epochs=int(os.environ.get('CAPTCHA_EPOCHS', '10')), batch_size=64, validation_split=0.2)
+    
+    model.save(MODEL_PATH)
+    joblib.dump(label_encoder, LABEL_ENCODER_PATH)
+    print("CNN model saved!")
 
 correct = 0
 wrong = 0
