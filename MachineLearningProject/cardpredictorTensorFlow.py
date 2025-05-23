@@ -123,8 +123,8 @@ def processTestImage(input):
             tempimage.append(temprow)
             hcount += 1    
         
-        img_array = np.array(tempimage)
-        img_resize = resize(img_array, IMG_SHAPE, anti_aliasing=True)
+        img_array = np.array(tempimage, dtype=np.float32)
+        img_resize = resize(img_array, IMG_SHAPE, anti_aliasing=True, preserve_range=True)
         img_2d = img_resize.reshape(IMG_SHAPE[0], IMG_SHAPE[1], 1)
         processed_segments.append(img_2d)
     
@@ -193,8 +193,8 @@ else:
             
                 
                 
-                img_array = np.array(tempimage)
-                img_resize = resize(img_array, IMG_SHAPE, anti_aliasing=True)
+                img_array = np.array(tempimage, dtype=np.float32)
+                img_resize = resize(img_array, IMG_SHAPE, anti_aliasing=True, preserve_range=True)
                 img_2d = img_resize.reshape(IMG_SHAPE[0], IMG_SHAPE[1], 1)
                 dataTrain.append(img_2d)
                 dataLabels.append(namelist[i])
